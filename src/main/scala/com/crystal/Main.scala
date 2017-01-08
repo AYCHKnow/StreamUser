@@ -1,5 +1,8 @@
 package com.crystal
 
+// Models
+import models.User
+
 // Config
 import com.typesafe.config.ConfigFactory
 
@@ -39,13 +42,22 @@ object Main extends App {
   val eventStream = kinesisStream
     .map { byteArray => new String(byteArray) }
     .map { stringVal => JSON.parseFull(stringVal).get.asInstanceOf[Map[String, Any]] }
-    .map { parsed => (
-      parsed.get("se_action").get,
-      parsed.get("se_label").get,
-      parsed.get("domain_userid").get
-    )}
 
-  eventStream.print()
+
+  val userStream = eventStream
+    .map { parsed =>
+      val user_id = parsed.get("network_userid").get.asInstanceOf[String]
+
+      User
+        .withID(user_id)
+        .performedAction(parsed.get("se_label").get.asInstanceOf[String])
+    }
+
+  userStream.map { user => user.save() }
+
+  userStream
+    .map { user => user.id }
+    .print()
 
   streamingCtx.start()
 
