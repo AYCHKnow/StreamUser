@@ -18,7 +18,7 @@ case class DynamoDB(table: Table) {
 
   def save(id: String, attributes: (String, Any)*) = {
     implicit val dynamoDB = DynamoDBv2.at(region)
-    table.put(id, attributes)
+    table.put(id, attributes:_*)
   }
 }
 
@@ -31,7 +31,8 @@ object DynamoDB {
     config.getString("user_table"),
     hashPK = "id",
     attributes = Seq(
-      AttributeDefinition("id", AttributeType.String)
+      AttributeDefinition("id", AttributeType.String),
+      AttributeDefinition("last_action", AttributeType.String)
     )
   )
 }
