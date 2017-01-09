@@ -31,8 +31,7 @@ object DynamoDB {
     config.getString("user_table"),
     hashPK = "id",
     attributes = Seq(
-      AttributeDefinition("id", AttributeType.String),
-      AttributeDefinition("last_action", AttributeType.String)
+      AttributeDefinition("id", AttributeType.String)
     )
   )
 }

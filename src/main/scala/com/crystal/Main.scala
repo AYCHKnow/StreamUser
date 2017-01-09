@@ -47,9 +47,8 @@ object Main extends App {
   val userStream = eventStream
     .map { parsed =>
       val user_id = parsed.get("network_userid").get.asInstanceOf[String]
-      val action_name = parsed.get("se_action").get.asInstanceOf[String]
 
-      User.withID(user_id).performedAction(action_name)
+      User.withID(user_id).performedAction(parsed)
     }
 
   userStream.foreachRDD { rdd =>
