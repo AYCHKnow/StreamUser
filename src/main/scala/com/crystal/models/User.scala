@@ -48,7 +48,7 @@ object User {
         val actions = attributes.find(_.name == "actions") match {
           case Some(actionAttr) =>
             val actionList = actionAttr
-              .value.l.map(_.getM.toMap.transform((key, value) => value.getS()))
+              .value.l.map(_.getM.toMap.transform((key, value) => value.getS))
 
             Queue[Map[String, String]]() ++ actionList
           case None => Queue()
