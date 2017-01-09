@@ -35,3 +35,21 @@ Performing User Segmentation on our event-level analytics. Communicating the seg
 1. Configure **aws-cli** on your machine (to connect to your AWS account)
 
 1. Run `sbt run` from project's root directory
+
+
+<br><br>
+
+# Working so far:
+
+1. Reading enriched JSON Snowplow data from Kinesis
+
+1. Real-time enrichment via historical DynamoDB data
+
+
+# TODO:
+
+1. Proper identity stitching
+
+1. Dynamic Segmentation Rules
+
+1. Responder logic for segmentation rules

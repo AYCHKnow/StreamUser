@@ -46,7 +46,8 @@ object Main extends App {
 
   val userStream = eventStream
     .map { parsed =>
-      val user_id = parsed.get("network_userid").get.asInstanceOf[String]
+      val identifier = config.getString("user_identifier")
+      val user_id = parsed.get(identifier).get.asInstanceOf[String]
 
       User.withID(user_id).performedAction(parsed)
     }

@@ -3,6 +3,7 @@ package models
 
 // Scala
 import scala.collection.immutable.Queue
+import scala.collection.JavaConversions._
 
 // Persistent Storage
 import stores.DynamoDB
@@ -27,7 +28,9 @@ case class User(val id: String, actions: Queue[Map[String, String]] = Queue()) {
   }
 
   def save() = {
-    store.save(id, "actions" -> actions)
+    if (!id.isEmpty) {
+      store.save(id, "actions" -> actions)
+    }
   }
 }
 
@@ -35,12 +38,18 @@ object User {
   val store = new DynamoDB(DynamoDB.userTable)
 
   def withID(id: String): User = {
+    if (id.isEmpty) {
+      return User("")
+    }
+
     store.find(id) match {
       case Some(user_data) =>
         val attributes = user_data.attributes
         val actions = attributes.find(_.name == "actions") match {
           case Some(actionAttr) =>
-            val actionList = actionAttr.value.l.asInstanceOf[Seq[Map[String, String]]]
+            val actionList = actionAttr
+              .value.l.map(_.getM.toMap.transform((key, value) => value.getS()))
+
             Queue[Map[String, String]]() ++ actionList
           case None => Queue()
         }
