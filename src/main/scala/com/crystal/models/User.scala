@@ -38,7 +38,7 @@ object User {
   val store = new DynamoDB(DynamoDB.userTable)
 
   def withID(id: String): User = {
-    if (id.isEmpty) {
+    if (id == null || id.isEmpty) {
       return User("")
     }
 
