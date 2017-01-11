@@ -1,7 +1,6 @@
 {
   "stream_name": "MyStreamName",
   "app_name": "MyAppName",
-  "endpoint_url": "kinesis.us-east-1.amazonaws.com",
   "region_name": "us-east-1",
   "checkpoint_interval": 5000,
   "user_table": "user_segmentation_data",
