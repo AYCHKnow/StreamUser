@@ -5,9 +5,6 @@ package stores
 import awscala.dynamodbv2.{ DynamoDB => DynamoDBv2, _}
 import awscala.Region
 
-// Config
-import com.typesafe.config.ConfigFactory
-
 case class DynamoDB(table: Table) {
   import DynamoDB._
 
@@ -23,12 +20,12 @@ case class DynamoDB(table: Table) {
 }
 
 object DynamoDB {
-  val config = ConfigFactory.load()
-  val region = Region(config.getString("region_name"))
+  val config = AppConfig.load().get
+  val region = Region(config.regionName)
   implicit val dynamoDB = DynamoDBv2.at(region)
 
   val userTable = Table(
-    config.getString("user_table"),
+    config.userTable,
     hashPK = "id",
     attributes = Seq(
       AttributeDefinition("id", AttributeType.String)
