@@ -14,7 +14,9 @@ libraryDependencies ++= Seq(
   "com.github.seratch" %% "awscala" % "0.5.9",
   "com.typesafe" % "config" % "1.3.1",
   "com.amazonaws" % "amazon-kinesis-client" % "1.7.2",
-  "com.github.scopt" %% "scopt" % "3.5.0"
+  "com.github.scopt" %% "scopt" % "3.5.0",
+  "org.scalatest" %% "scalatest" % "2.2.0" % "test",
+  "org.scalamock" %% "scalamock-scalatest-support" % "3.2.2" % "test"
 )
 
 packageName in Universal := "deploy"
