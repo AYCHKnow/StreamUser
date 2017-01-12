@@ -1,0 +1,10 @@
+version: '2'
+services:
+  spark: &base
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+    build:
+      context: .
+    ports:
+      - "4040:4040"

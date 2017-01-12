@@ -1,13 +1,21 @@
-name := "Snowplow Stream Processor"
+enablePlugins(JavaServerAppPackaging)
 
-version := "1.0"
+name := "streaming-user-segmentation"
+
+version := "0.1"
 
 scalaVersion := "2.11.1"
 
 sbtVersion := "0.13.13"
 
-libraryDependencies += "org.apache.spark" %% "spark-streaming-kinesis-asl" % "2.1.0"
-libraryDependencies += "com.github.seratch" %% "awscala" % "0.5.9"
-libraryDependencies += "com.typesafe" % "config" % "1.3.1"
-libraryDependencies += "com.amazonaws" % "amazon-kinesis-client" % "1.7.2"
-libraryDependencies += "com.github.scopt" %% "scopt" % "3.5.0"
+
+libraryDependencies ++= Seq(
+  "org.apache.spark" %% "spark-streaming-kinesis-asl" % "2.1.0",
+  "com.github.seratch" %% "awscala" % "0.5.9",
+  "com.typesafe" % "config" % "1.3.1",
+  "com.amazonaws" % "amazon-kinesis-client" % "1.7.2",
+  "com.github.scopt" %% "scopt" % "3.5.0"
+)
+
+packageName in Universal := "deploy"
+topLevelDirectory := None
