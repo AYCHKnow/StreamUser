@@ -1,12 +1,10 @@
 FROM java:openjdk-8
 MAINTAINER SequenceIQ
 
-ENV APP_ROOT /usr/src/app
-ENV SRC_ROOT /usr/src/src
+ENV SRC_ROOT /usr/src/app
 ENV SCALA_VERSION 2.11.1
 ENV SBT_VERSION 0.13.13
 
-RUN mkdir -p $APP_ROOT
 RUN mkdir -p $SRC_ROOT
 
 # Install Scala and sbt
@@ -31,10 +29,12 @@ RUN cd $SRC_ROOT; sbt
 # Package app
 COPY src $SRC_ROOT/src
 RUN cd $SRC_ROOT; sbt universal:packageBin
-RUN mv $SRC_ROOT/target/universal/deploy.zip $APP_ROOT/deploy.zip
 
-RUN unzip $APP_ROOT/deploy.zip -d $APP_ROOT/ && rm $APP_ROOT/deploy.zip
+# Put packaged app in dist folder
+RUN mkdir $SRC_ROOT/dist
+RUN mv $SRC_ROOT/target/universal/deploy.zip $SRC_ROOT/dist/deploy.zip
+RUN unzip $SRC_ROOT/dist/deploy.zip -d $SRC_ROOT/dist && rm $SRC_ROOT/dist/deploy.zip
 
 # WORKDIR kept at bottom because it's breaking Docker cache.
-WORKDIR $APP_ROOT
-CMD bin/streaming-user-segmentation
+WORKDIR $SRC_ROOT
+CMD dist/bin/streaming-user-segmentation
