@@ -21,17 +21,3 @@ aws s3 cp $EB_ZIP s3://$EB_BUCKET/$EB_ZIP
 # Run AWS command to create a new EB application with label
 aws elasticbeanstalk create-application-version --region=$REGION --application-name $APP_NAME --version-label $TAG --source-bundle S3Bucket=$EB_BUCKET,S3Key=$EB_ZIP
 aws elasticbeanstalk update-environment --region=$REGION --application-name $APP_NAME --environment-name "streaming-user-segmentation" --version-label $TAG
-
-# If app version is greater than 5, remove an old image
-images=`aws elasticbeanstalk describe-application-versions --region=$REGION --application-name $APP_NAME | sed "/$TAG/d" | sed -n 's/"VersionLabel": "\([^"]*\)",/\1/p'`;
-count=`echo "$images" | wc -l`
-if [ "$count" > 5 ]; then
-  image=`echo "$images" | tail -n 1`
-  image=`echo "$image" | sed "s/^[ \t]*//"`
-  aws elasticbeanstalk delete-application-version --version-label $image --application-name $APP_NAME --region=$REGION
-
-  # clean quay
-  quay_url="https://quay.io/api/v1/repository/crystalknows/streaming-user-segmentation/tag/${image}"
-  quay_header="Authorization: Bearer $QUAY_TOKEN"
-  curl --header "$quay_header" -X DELETE $quay_url
-fi
