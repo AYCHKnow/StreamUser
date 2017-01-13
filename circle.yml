@@ -27,3 +27,10 @@ database:
 test:
   override:
     - docker run quay.io/crystalknows/streaming-user-segmentation:$TAG sbt test
+
+deployment:
+  default:
+    branch: [master]
+    commands:
+      - docker login -e $QUAY_EMAIL -u $QUAY_USER -p $QUAY_PASS quay.io
+      - docker push quay.io/crystalknows/streaming-user-segmentation:$TAG

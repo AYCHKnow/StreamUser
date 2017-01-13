@@ -15,16 +15,12 @@ class AppConfigSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
   it should "default to ConfigFactory if no args given" in {
     val config = ConfigFactory.load()
 
-    if (config.isEmpty()) {
-      AppConfig.load().get should equal (AppConfig())
-    } else {
-      AppConfig.load().get.streamName should equal (config.getString("stream_name"))
-      AppConfig.load().get.appName should equal (config.getString("app_name"))
-      AppConfig.load().get.regionName should equal (config.getString("region_name"))
-      AppConfig.load().get.checkpointInterval should equal (config.getInt("checkpoint_interval"))
-      AppConfig.load().get.userTable should equal (config.getString("user_table"))
-      AppConfig.load().get.userIdentifier should equal (config.getString("user_identifier"))
-    }
+    AppConfig.load().get.streamName should equal (config.getString("stream_name"))
+    AppConfig.load().get.appName should equal (config.getString("app_name"))
+    AppConfig.load().get.regionName should equal (config.getString("region_name"))
+    AppConfig.load().get.checkpointInterval should equal (config.getInt("checkpoint_interval"))
+    AppConfig.load().get.userTable should equal (config.getString("user_table"))
+    AppConfig.load().get.userIdentifier should equal (config.getString("user_identifier"))
   }
 
   it should "respect the --streamName and -s CLI args" in {

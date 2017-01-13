@@ -3,8 +3,8 @@ package com.crystal
 // Config
 import com.typesafe.config.ConfigFactory
 
-case class AppConfig(streamName: String = "", appName: String = "", regionName: String = "",
-                     checkpointInterval: Int = -1, userTable: String = "", userIdentifier: String = "")
+case class AppConfig(streamName: String, appName: String, regionName: String,
+                     checkpointInterval: Int, userTable: String, userIdentifier: String)
 
 object AppConfig {
   private var cliArgs: Array[String] = Array()
@@ -37,18 +37,14 @@ object AppConfig {
     }
 
     val config = ConfigFactory.load()
-    val initialArgs = if (config.isEmpty()) {
-      AppConfig()
-    } else {
-      AppConfig(
-        streamName = config.getString("stream_name"),
-        appName = config.getString("app_name"),
-        regionName = config.getString("region_name"),
-        checkpointInterval = config.getInt("checkpoint_interval"),
-        userTable = config.getString("user_table"),
-        userIdentifier = config.getString("user_identifier")
-      )
-    }
+    val initialArgs = AppConfig(
+      streamName = config.getString("stream_name"),
+      appName = config.getString("app_name"),
+      regionName = config.getString("region_name"),
+      checkpointInterval = config.getInt("checkpoint_interval"),
+      userTable = config.getString("user_table"),
+      userIdentifier = config.getString("user_identifier")
+    )
 
     parser.parse(cliArgs, initialArgs)
   }

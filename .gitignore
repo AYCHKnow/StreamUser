@@ -1,4 +1,4 @@
-src/main/resources/application.json
+src/main/resources/application.conf
 
 *.class
 *.log

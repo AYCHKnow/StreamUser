@@ -17,6 +17,17 @@ Performing User Segmentation on our event-level analytics. Communicating the seg
 
 <br><br>
 
+# Development Setup (Docker)
+
+1. Create **src/main/resources/application.conf** with the proper configuration
+
+1. Set `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables
+
+1. Install docker and docker-compose
+
+1. `docker-compose up`
+
+<br><br>
 
 # Development Setup (Mac)
 
@@ -30,7 +41,7 @@ Performing User Segmentation on our event-level analytics. Communicating the seg
 
 1. `git clone git@github.com:crystal-project-inc/streaming_user_segmentation.git`
 
-1. Create **src/main/resources/application.json** with the proper configuration
+1. Create **src/main/resources/application.conf** with the proper configuration
 
 1. Configure **aws-cli** on your machine (to connect to your AWS account)
 
@@ -45,6 +56,7 @@ Performing User Segmentation on our event-level analytics. Communicating the seg
 
 1. Real-time enrichment via historical DynamoDB data
 
+<br>
 
 # TODO:
 
