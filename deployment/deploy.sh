@@ -18,6 +18,7 @@ zip -r $EB_ZIP $DOCKERRUN_FILE $EB_EXTENSIONS_DIR
 
 aws s3 cp $EB_ZIP s3://$EB_BUCKET/$EB_ZIP
 
+
 # Run AWS command to create a new EB application with label
 aws elasticbeanstalk create-application-version --region=$REGION --application-name $APP_NAME --version-label $TAG --source-bundle S3Bucket=$EB_BUCKET,S3Key=$EB_ZIP
 aws elasticbeanstalk update-environment --region=$REGION --application-name $APP_NAME --environment-name "streaming-user-segmentation" --version-label $TAG
