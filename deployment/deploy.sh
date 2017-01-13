@@ -4,7 +4,7 @@ TAG=$1
 
 # Prefix of file name is the tag.
 DOCKERRUN_FILE="Dockerrun.aws.json"
-DOCKERRUN_TEMPLATE="./deploy/dockerrun/Dockerrun.aws.json.template"
+DOCKERRUN_TEMPLATE="./deployment/Dockerrun.aws.json.template"
 EB_EXTENSIONS_DIR=".ebextensions"
 EB_ZIP="$TAG-eb-config.zip"
 
