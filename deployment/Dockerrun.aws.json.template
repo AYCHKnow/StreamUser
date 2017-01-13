@@ -4,14 +4,9 @@
     {
       "name": "crystal-realtime",
       "image": "quay.io/crystalknows/streaming-user-segmentation:<TAG>",
-      "memory": 7516,
+      "memory": 4096,
       "essential": true,
-      "portMappings": [
-        {
-          "hostPort": 80,
-          "containerPort": 3000
-        }
-      ]
+      "portMappings": []
     }
   ]
 }
