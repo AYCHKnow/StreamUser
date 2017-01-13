@@ -48,6 +48,7 @@ Performing User Segmentation on our event-level analytics. Communicating the seg
 1. Run `sbt run` from project's root directory
 
 
+
 <br><br>
 
 # Working so far:
