@@ -1,0 +1,29 @@
+---
+machine:
+  pre:
+    - sudo curl -L -o /usr/bin/docker 'https://s3-external-1.amazonaws.com/circle-downloads/docker-1.9.1-circleci'
+    - sudo chmod 0755 /usr/bin/docker
+  python:
+    version: 2.7.3
+  services:
+    - docker
+  environment:
+    TAG: "streaming-user-segmentation-$(echo $CIRCLE_BRANCH | replace '/' '-')-$CIRCLE_SHA1"
+
+dependencies:
+  cache_directories:
+    - "~/docker_cache"
+
+  override:
+    - if [[ -e ~/docker_cache/image_docker.tar ]]; then docker load -i ~/docker_cache/image_docker.tar && echo "Loaded docker image from cache"; fi
+    - docker build -t quay.io/crystalknows/streaming-user-segmentation:$TAG .
+    - mkdir -p ~/docker_cache; docker save quay.io/crystalknows/streaming-user-segmentation:$TAG > ~/docker_cache/image_docker.tar
+    - pip install awscli
+
+database:
+  override:
+    - echo "skipping"
+
+test:
+  override:
+    - docker run quay.io/crystalknows/streaming-user-segmentation:$TAG sbt test
