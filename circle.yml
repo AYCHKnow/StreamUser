@@ -34,5 +34,5 @@ deployment:
     commands:
       - docker login -e $QUAY_EMAIL -u $QUAY_USERNAME -p $QUAY_PASS quay.io
       - docker push quay.io/crystalknows/streaming-user-segmentation:$TAG
-      - chmod +x deploy/deploy.sh
+      - chmod +x deployment/deploy.sh
       - deployment/deploy.sh $TAG $CIRCLE_BRANCH
