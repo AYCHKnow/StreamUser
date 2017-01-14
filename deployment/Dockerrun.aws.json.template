@@ -1,12 +1,7 @@
 {
-  "AWSEBDockerrunVersion": 2,
-  "containerDefinitions": [
-    {
-      "name": "streaming-user-segmentation",
-      "image": "quay.io/crystalknows/streaming-user-segmentation:<TAG>",
-      "memory": 4096,
-      "essential": true,
-      "portMappings": []
-    }
-  ]
+  "AWSEBDockerrunVersion": "1",
+  "Image": {
+    "Name": "quay.io/crystalknows/streaming-user-segmentation:<TAG>",
+    "Update": "true"
+  }
 }
