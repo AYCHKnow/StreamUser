@@ -44,10 +44,11 @@ object Main extends App {
 
 
       val userStream = eventStream
-        .map { parsed =>
-          val user_id = parsed.get(appConfig.userIdentifier).get.asInstanceOf[String]
-
-          User.withID(user_id).performedAction(parsed)
+        .map { e => (e.get(appConfig.userIdentifier).get.asInstanceOf[String], Array(e)) }
+        .reduceByKey { (a, b) => a.union(b) }
+        .map {
+          case (user_id, eventList) =>
+            eventList.foldLeft(User.withID(user_id)) { (b, a) => b.performedAction(a) }
         }
 
       userStream.foreachRDD { rdd =>
