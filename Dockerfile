@@ -35,6 +35,7 @@ RUN mkdir $SRC_ROOT/dist
 RUN mv $SRC_ROOT/target/universal/deploy.zip $SRC_ROOT/dist/deploy.zip
 RUN unzip $SRC_ROOT/dist/deploy.zip -d $SRC_ROOT/dist && rm $SRC_ROOT/dist/deploy.zip
 
+
 # WORKDIR kept at bottom because it's breaking Docker cache.
 WORKDIR $SRC_ROOT
 RUN chmod +x dist/bin/streaming-user-segmentation
