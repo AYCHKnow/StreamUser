@@ -3,5 +3,10 @@
   "Image": {
     "Name": "quay.io/crystalknows/streaming-user-segmentation:<TAG>",
     "Update": "true"
-  }
+  },
+  "Ports": [
+    {
+      "ContainerPort": "1234"
+    }
+  ]
 }
