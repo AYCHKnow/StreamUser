@@ -37,4 +37,5 @@ RUN unzip $SRC_ROOT/dist/deploy.zip -d $SRC_ROOT/dist && rm $SRC_ROOT/dist/deplo
 
 # WORKDIR kept at bottom because it's breaking Docker cache.
 WORKDIR $SRC_ROOT
-CMD dist/bin/streaming-user-segmentation
+RUN chmod +x dist/bin/streaming-user-segmentation
+CMD /bin/bash dist/bin/streaming-user-segmentation
