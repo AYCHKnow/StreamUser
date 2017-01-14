@@ -44,7 +44,11 @@ object Main extends App {
 
 
       val userStream = eventStream
-        .map { e => (e.get(appConfig.userIdentifier).get.asInstanceOf[String], Array(e)) }
+        .map { e =>
+          val user_id = e.get(appConfig.userIdentifier).get.asInstanceOf[String]
+
+          (user_id, Array(e))
+        }
         .reduceByKey { (a, b) => a.union(b) }
         .map {
           case (user_id, eventList) =>
