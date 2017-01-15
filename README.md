@@ -1,8 +1,6 @@
 # Streaming User Segmentation
 
-[![CircleCI](https://circleci.com/gh/crystal-project-inc/streaming_user_segmentation/tree/master.svg?style=svg)](https://circleci.com/gh/crystal-project-inc/streaming_user_segmentation/tree/master)
-
-[![codecov](https://codecov.io/gh/crystal-project-inc/streaming_user_segmentation/branch/master/graph/badge.svg)](https://codecov.io/gh/crystal-project-inc/streaming_user_segmentation)
+[![CircleCI](https://circleci.com/gh/crystal-project-inc/streaming_user_segmentation/tree/master.svg?style=svg)](https://circleci.com/gh/crystal-project-inc/streaming_user_segmentation/tree/master) [![codecov](https://codecov.io/gh/crystal-project-inc/streaming_user_segmentation/branch/master/graph/badge.svg)](https://codecov.io/gh/crystal-project-inc/streaming_user_segmentation)
 
 
 *In Development - Not fully functional*<br><br>
