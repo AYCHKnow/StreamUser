@@ -31,6 +31,14 @@ class AppConfigSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
     AppConfig.load().get.streamName should equal ("testName2")
   }
 
+  it should "respect the --outStreamName and -o CLI args" in {
+    AppConfig.setArgs(Array("--outStreamName", "testName"))
+    AppConfig.load().get.outStreamName should equal ("testName")
+
+    AppConfig.setArgs(Array("-o", "testName2"))
+    AppConfig.load().get.outStreamName should equal ("testName2")
+  }
+
   it should "respect the --appName CLI arg" in {
     AppConfig.setArgs(Array("--appName", "testApp"))
     AppConfig.load().get.appName should equal ("testApp")
