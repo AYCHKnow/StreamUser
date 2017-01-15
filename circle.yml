@@ -26,9 +26,7 @@ database:
 
 test:
   override:
-    - docker run quay.io/crystalknows/streaming-user-segmentation:$TAG sbt clean coverage test coverageReport
-  post:
-    - bash <(curl -s https://codecov.io/bash)
+    - docker run quay.io/crystalknows/streaming-user-segmentation:$TAG "sbt clean coverage test coverageReport && bash <(curl -s https://codecov.io/bash)"
 
 
 deployment:
