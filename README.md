@@ -1,5 +1,7 @@
 # Streaming User Segmentation
 
+[![CircleCI](https://circleci.com/gh/crystal-project-inc/streaming_user_segmentation/tree/master.svg?style=svg)](https://circleci.com/gh/crystal-project-inc/streaming_user_segmentation/tree/master)
+
 *In Development - Not fully functional*<br><br>
 
 Will combine the following technologies:
@@ -59,7 +61,7 @@ Performing User Segmentation on our event-level analytics. Communicating the seg
 
 <br>
 
-# TODO:
+# Not done yet:
 
 1. Proper identity stitching
 
