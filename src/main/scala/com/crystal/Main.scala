@@ -2,6 +2,7 @@ package com.crystal
 
 // Models
 import models.User
+import models.Segment
 
 // Spark
 import org.apache.spark.SparkConf
@@ -52,12 +53,19 @@ object Main extends App {
         .reduceByKey { (a, b) => a.union(b) }
         .map {
           case (user_id, eventList) =>
-            eventList.foldLeft(User.withID(user_id)) { (b, a) => b.performedAction(a) }
+            eventList.foldLeft(User.withID(user_id)) { (u, a) => u.performedAction(a) }
         }
+        .filter { user => !user.id.isEmpty }
+
+      val testSegment = new Segment("testSegment")
 
       userStream.foreachRDD { rdd =>
         rdd.collect().foreach{ user =>
-          println(user.id)
+          if (testSegment.containsUser(user)) {
+            println(s"${user.id} is in segment ${testSegment.name}")
+            testSegment.publishUserEntrance(user)
+          }
+
           user.save()
         }
       }

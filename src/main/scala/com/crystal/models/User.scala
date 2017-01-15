@@ -28,9 +28,7 @@ case class User(val id: String, actions: Queue[Map[String, String]] = Queue()) {
   }
 
   def save() = {
-    if (!id.isEmpty) {
-      store.save(id, "actions" -> actions)
-    }
+    store.save(id, "actions" -> actions)
   }
 }
 
