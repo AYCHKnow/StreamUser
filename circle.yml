@@ -27,6 +27,9 @@ database:
 test:
   override:
     - docker run quay.io/crystalknows/streaming-user-segmentation:$TAG sbt test
+  post:
+    - bash <(curl -s https://codecov.io/bash)
+
 
 deployment:
   default:
