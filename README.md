@@ -5,6 +5,8 @@
 
 *In Development - Not fully functional*<br><br>
 
+[[https://github.com/crystal-project-inc/streaming_user_segmentation/blob/master/readme_files/flowchart.png|alt=flowchart]]
+
 Will combine the following technologies:
 
 - **Snowplow Analytics** (utilizing Kinesis streams) - https://github.com/snowplow/snowplow
