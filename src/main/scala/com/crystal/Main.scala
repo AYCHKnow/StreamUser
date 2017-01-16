@@ -12,6 +12,7 @@ import org.apache.spark.streaming.kinesis._
 import com.amazonaws.services.kinesis.clientlibrary.lib.worker.InitialPositionInStream
 
 // JSON Parsing
+import com.snowplowanalytics.snowplow.analytics.scalasdk.json.EventTransformer
 import scala.util.parsing.json.JSON
 
 object Main extends App {
@@ -41,7 +42,10 @@ object Main extends App {
 
       val eventStream = kinesisStream
         .map { byteArray => new String(byteArray) }
-        .map { stringVal => JSON.parseFull(stringVal).get.asInstanceOf[Map[String, Any]] }
+        .map(line => EventTransformer.transform(line))
+        .filter(_.isSuccess)
+        .flatMap(_.toOption)
+        .map { jsonStr => JSON.parseFull(jsonStr).get.asInstanceOf[Map[String, Any]] }
 
 
       val userStream = eventStream
