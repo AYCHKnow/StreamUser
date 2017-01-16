@@ -31,7 +31,7 @@ object Main extends App {
       streamingCtx.start()
 
       streamingCtx
-        .awaitTerminationOrTimeout(appConfig.checkpointInterval)
+        .awaitTerminationOrTimeout(appConfig.checkpointInterval * 3)
 
     case None => ()
   }
