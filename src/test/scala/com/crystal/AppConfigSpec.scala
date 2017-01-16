@@ -16,7 +16,10 @@ class AppConfigSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
     val config = ConfigFactory.load()
 
     AppConfig.load().get.streamName should equal (config.getString("stream_name"))
+    AppConfig.load().get.commandStreamName should equal (config.getString("command_stream_name"))
+    AppConfig.load().get.outStreamName should equal (config.getString("out_stream_name"))
     AppConfig.load().get.appName should equal (config.getString("app_name"))
+    AppConfig.load().get.commandAppName should equal (config.getString("command_app_name"))
     AppConfig.load().get.regionName should equal (config.getString("region_name"))
     AppConfig.load().get.checkpointInterval should equal (config.getInt("checkpoint_interval"))
     AppConfig.load().get.userTable should equal (config.getString("user_table"))
@@ -31,6 +34,11 @@ class AppConfigSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
     AppConfig.load().get.streamName should equal ("testName2")
   }
 
+  it should "respect the --cmdStreamName CLI arg" in {
+    AppConfig.setArgs(Array("--cmdStreamName", "testCmdName"))
+    AppConfig.load().get.commandStreamName should equal ("testCmdName")
+  }
+
   it should "respect the --outStreamName and -o CLI args" in {
     AppConfig.setArgs(Array("--outStreamName", "testName"))
     AppConfig.load().get.outStreamName should equal ("testName")
@@ -42,6 +50,11 @@ class AppConfigSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
   it should "respect the --appName CLI arg" in {
     AppConfig.setArgs(Array("--appName", "testApp"))
     AppConfig.load().get.appName should equal ("testApp")
+  }
+
+  it should "respect the --cmdAppName CLI arg" in {
+    AppConfig.setArgs(Array("--cmdAppName", "testCmdApp"))
+    AppConfig.load().get.commandAppName should equal ("testCmdApp")
   }
 
   it should "respect the --regionName and -r CLI args" in {
