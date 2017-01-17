@@ -27,8 +27,6 @@ object Main extends App {
 
       val system = ActorSystem("SegmentationSystem")
       val overseer = system.actorOf(Overseer.props(appConfig, streamingCtx), "overseer")
-
-      overseer ! Overseer.StartProcessors()
     case None => ()
   }
 }

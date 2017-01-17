@@ -46,6 +46,5 @@ object Overseer {
     Props(new Overseer(appConfig, streamingCtx))
   }
 
-  case class StartProcessors()
   case class ProcessorReady(processor: ActorRef)
 }
