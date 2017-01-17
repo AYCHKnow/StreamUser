@@ -1,60 +1,62 @@
 package com.crystal
 package processors
 
-// scala
-import scala.language.postfixOps
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-import scala.concurrent.duration._
+// akka
+import akka.actor._
 
-// amazonaws
-import com.amazonaws.auth.{DefaultAWSCredentialsProviderChain}
-import com.amazonaws.services.kinesis.clientlibrary.lib.worker.KinesisClientLibConfiguration
-import com.amazonaws.services.kinesis.model.Record
+// Spark
+import org.apache.spark.streaming.kinesis._
+import org.apache.spark.streaming.{ Duration, StreamingContext }
+import org.apache.spark.streaming.dstream.DStream
+import org.apache.spark.storage.StorageLevel
+import com.amazonaws.services.kinesis.clientlibrary.lib.worker.InitialPositionInStream
 
-// kinesis
-import com.gilt.gfc.aws.kinesis.client.{KCLConfiguration, KCLWorkerRunner, KinesisRecordReader}
+// JSON Parsing
+import scala.util.parsing.json.JSON
 
-/*
- * TODO: This should use Spark in the future
- *       Spark currently does not allow processing of multiple kinesis streams
- */
+// Messages
+import Overseer.ProcessorReady
 
-object CommandStreamProcessor {
-  def setup(appConfig: AppConfig) = {
-    val kclConfig = getKclConfig(appConfig)
+class CommandStreamProcessor(appConfig: AppConfig, streamingCtx: StreamingContext) extends Actor {
+  import CommandStreamProcessor._
 
-    val thread = new Thread(new Runnable {
-      def run() {
-        implicit object ARecordReader extends KinesisRecordReader[Record]{
-          override def apply(r: Record) : Record = {
-            r
-          }
-        }
+  override def preStart() {
+    super.preStart()
+    val cmdStream = getCommandStream()
 
-        KCLWorkerRunner(kclConfig).runAsyncSingleRecordProcessor[Record](1 minute) { record: Record =>
-          Future {
-            val seqNumber = record.getSequenceNumber()
-            val data = record.getData()
-
-            println("Command Received")
-          }
-        }
+    cmdStream.foreachRDD { rdd =>
+      rdd.collect().foreach{ cmd =>
+        println("--- Command Received ---")
       }
-    })
+    }
 
-    thread.start
+    context.parent ! ProcessorReady(self)
   }
 
-  private def getKclConfig(appConfig: AppConfig): KinesisClientLibConfiguration = {
-    val credentialsProvider = new DefaultAWSCredentialsProviderChain()
+  def receive = {
+    case _ => ()
+  }
 
-    KCLConfiguration(
+  private def getCommandStream(): DStream[Map[String, Any]] = {
+    val stream = KinesisUtils.createStream(
+      streamingCtx,
       appConfig.commandAppName,
       appConfig.commandStreamName,
-      credentialsProvider,
-      credentialsProvider,
-      credentialsProvider
-    ).withRegionName(appConfig.regionName)
+      s"kinesis.${appConfig.regionName}.amazonaws.com",
+      appConfig.regionName,
+      InitialPositionInStream.LATEST,
+      Duration(appConfig.checkpointInterval),
+      StorageLevel.MEMORY_AND_DISK_2
+    )
+
+    stream
+      .map { byteArray => new String(byteArray) }
+      .map { jsonStr => JSON.parseFull(jsonStr).get.asInstanceOf[Map[String, Any]] }
+  }
+}
+
+object CommandStreamProcessor {
+  def props(appConfig: AppConfig, streamingCtx: StreamingContext): Props = {
+    Props(new CommandStreamProcessor(appConfig, streamingCtx))
   }
 }
