@@ -26,7 +26,7 @@ class CommandStreamProcessor(appConfig: AppConfig, streamingCtx: StreamingContex
   log.info("Setup Command Stream")
 
   cmdStream.foreachRDD { rdd =>
-    rdd.collect().foreach{ cmd =>
+    rdd.foreach{ cmd =>
       println("--- Command Received ---")
     }
   }
