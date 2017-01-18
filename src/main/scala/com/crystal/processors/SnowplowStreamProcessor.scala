@@ -3,6 +3,7 @@ package processors
 
 // akka
 import akka.actor._
+import akka.event.Logging
 
 // Models
 import models.User
@@ -24,6 +25,7 @@ import Overseer.ProcessorReady
 
 class SnowplowStreamProcessor(appConfig: AppConfig, streamingCtx: StreamingContext) extends Actor {
   import SnowplowStreamProcessor._
+  val log = Logging(context.system, this)
 
   override def preStart() = {
     super.preStart()
@@ -31,13 +33,14 @@ class SnowplowStreamProcessor(appConfig: AppConfig, streamingCtx: StreamingConte
     val snowplowStream = getSnowplowStream(streamingCtx, appConfig)
     val evtStream = getEventStream(snowplowStream)
     val userStream = getUserStream(evtStream, appConfig.userIdentifier)
+    log.info("Setup Snowplow User Stream")
 
     val testSegment = new Segment("testSegment")
 
     userStream.foreachRDD { rdd =>
       rdd.collect().foreach{ user =>
         if (testSegment.containsUser(user)) {
-          println(s"${user.id} is in segment ${testSegment.name}")
+          log.info(s"${user.id} is in segment ${testSegment.name}")
           testSegment.publishUserEntrance(user)
         }
 
@@ -45,6 +48,7 @@ class SnowplowStreamProcessor(appConfig: AppConfig, streamingCtx: StreamingConte
       }
     }
 
+    log.info("Snowplow Stream Processor Ready")
     context.parent ! ProcessorReady(self)
   }
 

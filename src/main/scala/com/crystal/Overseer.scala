@@ -2,6 +2,7 @@ package com.crystal
 
 // akka
 import akka.actor._
+import akka.event.Logging
 
 // Spark
 import org.apache.spark.streaming.{ StreamingContext }
@@ -12,6 +13,7 @@ import processors.CommandStreamProcessor
 
 class Overseer(appConfig: AppConfig, streamingCtx: StreamingContext) extends Actor {
   import Overseer._
+  val log = Logging(context.system, this)
 
   val commandStream = context.actorOf(
     CommandStreamProcessor.props(appConfig, streamingCtx),
@@ -25,13 +27,24 @@ class Overseer(appConfig: AppConfig, streamingCtx: StreamingContext) extends Act
 
   var snowplowReady = false
   var commandReady = false
+  log.info("Overseer initialized. Waiting on processors")
 
   def receive = {
     case ProcessorReady(processor) =>
-      if (processor == snowplowStream) snowplowReady = true
-      if (processor == commandStream) commandReady = true
+      if (processor == snowplowStream) {
+        log.info("Overseer learned Snowplow Processor is ready")
+        snowplowReady = true
+      }
 
-      if (snowplowReady && commandReady) startSpark()
+      if (processor == commandStream) {
+        log.info("Overseer learned Command Processor is ready")
+        commandReady = true
+      }
+
+      if (snowplowReady && commandReady) {
+        log.info("Overseer starting Spark")
+        startSpark()
+      }
     case _ => ()
   }
 

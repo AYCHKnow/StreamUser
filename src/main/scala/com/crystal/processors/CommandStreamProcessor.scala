@@ -3,6 +3,7 @@ package processors
 
 // akka
 import akka.actor._
+import akka.event.Logging
 
 // Spark
 import org.apache.spark.streaming.kinesis._
@@ -19,16 +20,20 @@ import Overseer.ProcessorReady
 
 class CommandStreamProcessor(appConfig: AppConfig, streamingCtx: StreamingContext) extends Actor {
   import CommandStreamProcessor._
+  val log = Logging(context.system, this)
 
   override def preStart() {
     super.preStart()
     val cmdStream = getCommandStream()
+    log.info("Setup Command Stream")
 
     cmdStream.foreachRDD { rdd =>
       rdd.collect().foreach{ cmd =>
-        println("--- Command Received ---")
+        log.info("--- Command Received ---")
       }
     }
+
+    log.info("Command Stream Processor Ready")
 
     context.parent ! ProcessorReady(self)
   }
