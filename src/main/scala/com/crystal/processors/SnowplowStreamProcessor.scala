@@ -35,7 +35,7 @@ class SnowplowStreamProcessor(appConfig: AppConfig, streamingCtx: StreamingConte
   val testSegment = new Segment("testSegment")
 
   userStream.foreachRDD { rdd =>
-    rdd.collect().foreach{ user =>
+    rdd.foreach{ user =>
       if (testSegment.containsUser(user)) {
         log.info(s"${user.id} is in segment ${testSegment.name}")
         testSegment.publishUserEntrance(user)
