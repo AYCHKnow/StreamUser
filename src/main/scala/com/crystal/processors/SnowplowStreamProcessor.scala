@@ -32,12 +32,12 @@ class SnowplowStreamProcessor(appConfig: AppConfig, streamingCtx: StreamingConte
   val userStream = getUserStream(evtStream, appConfig.userIdentifier)
   log.info("Setup Snowplow User Stream")
 
-  val testSegment = new Segment("testSegment")
-
   userStream.foreachRDD { rdd =>
     rdd.foreach{ user =>
+      val testSegment = new Segment("testSegment")
+      
       if (testSegment.containsUser(user)) {
-        log.info(s"${user.id} is in segment ${testSegment.name}")
+        println(s"${user.id} is in segment ${testSegment.name}")
         testSegment.publishUserEntrance(user)
       }
 
