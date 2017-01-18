@@ -22,9 +22,6 @@ object Main extends App {
         Duration(appConfig.checkpointInterval)
       )
 
-      // Disable noisy logging
-      streamingCtx.sparkContext.setLogLevel("ERROR")
-
       val system = ActorSystem("SegmentationSystem")
       val overseer = system.actorOf(Overseer.props(appConfig, streamingCtx), "overseer")
     case None => ()
