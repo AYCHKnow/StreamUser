@@ -1,17 +1,23 @@
-FROM java:openjdk-8
-MAINTAINER SequenceIQ
+FROM gettyimages/spark
+ENV LD_LIBRARY_PATH $HADOOP_HOME/lib/native/:$LD_LIBRARY_PATH
 
 ENV SRC_ROOT /usr/src/app
 ENV SCALA_VERSION 2.11.1
 ENV SBT_VERSION 0.13.13
 
 RUN mkdir -p $SRC_ROOT
+RUN apt-get update
+RUN apt-get install -y wget
 
-# Install Scala and sbt
+# Install Java
+RUN echo deb http://http.debian.net/debian jessie-backports main >> /etc/apt/sources.list
+RUN apt-get update && apt-get install -y openjdk-8-jdk
+RUN update-alternatives --config java
+
+# Install Scala
 RUN wget www.scala-lang.org/files/archive/scala-$SCALA_VERSION.deb
 RUN dpkg -i scala-$SCALA_VERSION.deb
-RUN apt-get update
-RUN apt-get install scala
+RUN apt-get install -y scala
 
 # Install sbt
 RUN echo 'deb http://dl.bintray.com/sbt/debian /' > /etc/apt/sources.list.d/sbt.list &&\

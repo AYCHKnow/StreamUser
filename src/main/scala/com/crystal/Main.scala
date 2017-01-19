@@ -14,7 +14,7 @@ object Main extends App {
   AppConfig.load() match {
     case Some(appConfig) =>
       val sparkConf = new SparkConf()
-        .setMaster("local[2]")
+        .setMaster("local[*]")
         .setAppName(appConfig.appName)
 
       val streamingCtx = new StreamingContext(
