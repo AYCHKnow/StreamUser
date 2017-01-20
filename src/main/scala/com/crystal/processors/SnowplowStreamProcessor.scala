@@ -27,26 +27,30 @@ class SnowplowStreamProcessor(appConfig: AppConfig, streamingCtx: StreamingConte
   import SnowplowStreamProcessor._
   val log = Logging(context.system, this)
 
-  val snowplowStream = getSnowplowStream(streamingCtx, appConfig)
-  val evtStream = getEventStream(snowplowStream)
-  val userStream = getUserStream(evtStream, appConfig.userIdentifier)
-  log.info("Setup Snowplow User Stream")
+  override def preStart = {
+    super.preStart()
 
-  userStream.foreachRDD { rdd =>
-    rdd.foreach{ user =>
-      val testSegment = new Segment("testSegment")
+    val snowplowStream = getSnowplowStream(streamingCtx, appConfig)
+    val evtStream = getEventStream(snowplowStream)
+    val userStream = getUserStream(evtStream, appConfig.userIdentifier)
+    log.info("Setup Snowplow User Stream")
 
-      if (testSegment.containsUser(user)) {
-        println(s"${user.id} is in segment ${testSegment.name}")
-        testSegment.publishUserEntrance(user)
+    userStream.foreachRDD { rdd =>
+      rdd.foreach{ user =>
+        val testSegment = new Segment("testSegment")
+
+        if (testSegment.containsUser(user)) {
+          println(s"${user.id} is in segment ${testSegment.name}")
+          testSegment.publishUserEntrance(user)
+        }
+
+        user.save()
       }
-
-      user.save()
     }
-  }
 
-  log.info("Snowplow Stream Processor Ready")
-  context.parent ! ProcessorReady(self)
+    log.info("Snowplow Stream Processor Ready")
+    context.parent ! ProcessorReady(self)
+  }
 
   def receive = {
     case _ => ()

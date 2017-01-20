@@ -22,18 +22,22 @@ class CommandStreamProcessor(appConfig: AppConfig, streamingCtx: StreamingContex
   import CommandStreamProcessor._
   val log = Logging(context.system, this)
 
-  val cmdStream = getCommandStream()
-  log.info("Setup Command Stream")
+  override def preStart = {
+    super.preStart()
 
-  cmdStream.foreachRDD { rdd =>
-    rdd.foreach{ cmd =>
-      println("--- Command Received ---")
+    val cmdStream = getCommandStream()
+    log.info("Setup Command Stream")
+
+    cmdStream.foreachRDD { rdd =>
+      rdd.foreach{ cmd =>
+        println("--- Command Received ---")
+      }
     }
+
+    log.info("Command Stream Processor Ready")
+
+    context.parent ! ProcessorReady(self)
   }
-
-  log.info("Command Stream Processor Ready")
-
-  context.parent ! ProcessorReady(self)
 
   def receive = {
     case _ => ()
