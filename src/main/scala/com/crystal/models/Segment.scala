@@ -10,11 +10,14 @@ import org.json4s.jackson.JsonMethods._
 import org.json4s.jackson.Serialization
 import org.json4s.jackson.Serialization.{read, write}
 
-case class Segment(val name: String) {
+// Rules
+import rule_engine.rules.Rule
+
+case class Segment(val name: String, rule: Rule) {
   import Segment._
 
   def containsUser(user: User): Boolean = {
-    return true
+    rule.fulfilledBy(user.toMap)
   }
 
   def publishUserEntrance(user: User) = {

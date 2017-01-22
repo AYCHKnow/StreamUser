@@ -5,10 +5,6 @@ package processors
 import akka.actor._
 import akka.event.Logging
 
-// Models
-import models.User
-import models.Segment
-
 // Spark
 import org.apache.spark.streaming.kinesis._
 import org.apache.spark.streaming.{ Duration, StreamingContext }
@@ -22,6 +18,13 @@ import scala.util.parsing.json.JSON
 
 // Messages
 import Overseer.ProcessorReady
+
+// Models
+import models.User
+import models.Segment
+
+// Segmentation Rules
+import rule_engine.rules._
 
 class SnowplowStreamProcessor(appConfig: AppConfig, streamingCtx: StreamingContext) extends Actor {
   import SnowplowStreamProcessor._
@@ -37,11 +40,20 @@ class SnowplowStreamProcessor(appConfig: AppConfig, streamingCtx: StreamingConte
 
     userStream.foreachRDD { rdd =>
       rdd.foreach{ user =>
-        val testSegment = new Segment("testSegment")
+        val signedUpRule = ContainsAllRule(
+          property = Some("actions"),
+          ruleset = Vector(
+            EqualsRule(property = Some("action"), value = Some("Signed Up"))
+          )
+        )
+
+        val testSegment = new Segment("SignedUp", signedUpRule)
 
         if (testSegment.containsUser(user)) {
           println(s"${user.id} is in segment ${testSegment.name}")
           testSegment.publishUserEntrance(user)
+        } else {
+          println(s"${user.id} is NOT in segment ${testSegment.name}")
         }
 
         user.save()

@@ -11,6 +11,8 @@ import stores.DynamoDB
 case class User(val id: String, persistedActions: Queue[UserAction] = Queue(), newActions: Queue[UserAction] = Queue()) {
   import User._
 
+  val actions = persistedActions ++ newActions
+
   def performedAction(action: Map[String, Any]): User = {
     val newAction = UserAction(
       userID = id,
@@ -27,6 +29,13 @@ case class User(val id: String, persistedActions: Queue[UserAction] = Queue(), n
 
   def save() = {
     newActions.map { action => action.save() }
+  }
+
+  def toMap(): Map[String, Any] = {
+    Map(
+      "id" -> id,
+      "actions" -> actions.map(_.toMap)
+    )
   }
 }
 
