@@ -49,11 +49,20 @@ class SnowplowStreamProcessor(appConfig: AppConfig, streamingCtx: StreamingConte
 
         val testSegment = new Segment("SignedUp", signedUpRule)
 
-        if (testSegment.containsUser(user)) {
-          println(s"${user.id} is in segment ${testSegment.name}")
+        val wasInSegment = testSegment.alreadyContainedUser(user)
+        val isInSegment = testSegment.containsUser(user)
+        if (isInSegment && !wasInSegment) {
+          println(s"${user.id} is now in segment ${testSegment.name}")
           testSegment.publishUserEntrance(user)
+
+        } else if(!isInSegment && wasInSegment) {
+          println(s"${user.id} is no longer in ${testSegment.name}")
+          testSegment.publishUserExit(user)
+
+        } else if(wasInSegment) {
+          println(s"${user.id} is still in ${testSegment.name}")
         } else {
-          println(s"${user.id} is NOT in segment ${testSegment.name}")
+          println(s"${user.id} is not in ${testSegment.name}")
         }
 
         user.save()

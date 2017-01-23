@@ -20,6 +20,11 @@ case class Segment(val name: String, rule: Rule) {
     rule.fulfilledBy(user.toMap)
   }
 
+  def alreadyContainedUser(user: User): Boolean = {
+    val userWithoutNewEvents = User(user.id, user.persistedActions)
+    rule.fulfilledBy(userWithoutNewEvents.toMap)
+  }
+
   def publishUserEntrance(user: User) = {
     implicit val formats = Serialization.formats(ShortTypeHints(List(classOf[EnterSegmentEvent])))
 
