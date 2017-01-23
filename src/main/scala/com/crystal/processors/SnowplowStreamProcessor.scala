@@ -43,7 +43,7 @@ class SnowplowStreamProcessor(appConfig: AppConfig, streamingCtx: StreamingConte
         val signedUpRule = ContainsAllRule(
           property = Some("actions"),
           ruleset = Vector(
-            EqualsRule(property = Some("action"), value = Some("Signed Up"))
+            EqualsRule(property = Some("action"), value = Some("Signed up"))
           )
         )
 
