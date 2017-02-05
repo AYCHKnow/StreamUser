@@ -1,10 +1,6 @@
 package com.crystal
 package processors
 
-// akka
-import akka.actor._
-import akka.event.Logging
-
 // Spark
 import org.apache.spark.streaming.kinesis._
 import org.apache.spark.streaming.{ Duration, StreamingContext }
@@ -15,35 +11,20 @@ import com.amazonaws.services.kinesis.clientlibrary.lib.worker.InitialPositionIn
 // JSON Parsing
 import scala.util.parsing.json.JSON
 
-// Messages
-import Overseer.ProcessorReady
-
-class CommandStreamProcessor(appConfig: AppConfig, streamingCtx: StreamingContext) extends Actor {
-  import CommandStreamProcessor._
-  val log = Logging(context.system, this)
-
-  override def preStart = {
-    super.preStart()
-
-    val cmdStream = getCommandStream()
-    log.info("Setup Command Stream")
+object CommandStreamProcessor {
+  def setup(appConfig: AppConfig, streamingCtx: StreamingContext) = {
+    val cmdStream = getCommandStream(appConfig, streamingCtx)
 
     cmdStream.foreachRDD { rdd =>
       rdd.foreach{ cmd =>
         println("--- Command Received ---")
       }
     }
-
-    log.info("Command Stream Processor Ready")
-
-    context.parent ! ProcessorReady(self)
   }
 
-  def receive = {
-    case _ => ()
-  }
-
-  private def getCommandStream(): DStream[Map[String, Any]] = {
+  private def getCommandStream(
+    appConfig: AppConfig,
+    streamingCtx: StreamingContext): DStream[Map[String, Any]] = {
     val stream = KinesisUtils.createStream(
       streamingCtx,
       appConfig.commandAppName,
@@ -59,10 +40,5 @@ class CommandStreamProcessor(appConfig: AppConfig, streamingCtx: StreamingContex
       .map { byteArray => new String(byteArray) }
       .map { jsonStr => JSON.parseFull(jsonStr).get.asInstanceOf[Map[String, Any]] }
   }
-}
 
-object CommandStreamProcessor {
-  def props(appConfig: AppConfig, streamingCtx: StreamingContext): Props = {
-    Props(new CommandStreamProcessor(appConfig, streamingCtx))
-  }
 }

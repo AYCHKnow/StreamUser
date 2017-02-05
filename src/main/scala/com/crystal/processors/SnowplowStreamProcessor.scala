@@ -1,10 +1,6 @@
 package com.crystal
 package processors
 
-// akka
-import akka.actor._
-import akka.event.Logging
-
 // Spark
 import org.apache.spark.streaming.kinesis._
 import org.apache.spark.streaming.{ Duration, StreamingContext }
@@ -16,9 +12,6 @@ import com.amazonaws.services.kinesis.clientlibrary.lib.worker.InitialPositionIn
 import com.snowplowanalytics.snowplow.analytics.scalasdk.json.EventTransformer
 import scala.util.parsing.json.JSON
 
-// Messages
-import Overseer.ProcessorReady
-
 // Models
 import models.User
 import models.Segment
@@ -26,17 +19,11 @@ import models.Segment
 // Segmentation Rules
 import rule_engine.rules._
 
-class SnowplowStreamProcessor(appConfig: AppConfig, streamingCtx: StreamingContext) extends Actor {
-  import SnowplowStreamProcessor._
-  val log = Logging(context.system, this)
-
-  override def preStart = {
-    super.preStart()
-
-    val snowplowStream = getSnowplowStream(streamingCtx, appConfig)
+object SnowplowStreamProcessor {
+  def setup(appConfig: AppConfig, streamingCtx: StreamingContext) = {
+    val snowplowStream = getSnowplowStream(appConfig, streamingCtx)
     val evtStream = getEventStream(snowplowStream)
     val userStream = getUserStream(evtStream, appConfig.userIdentifier)
-    log.info("Setup Snowplow User Stream")
 
     userStream.foreachRDD { rdd =>
       rdd.foreach{ user =>
@@ -68,16 +55,10 @@ class SnowplowStreamProcessor(appConfig: AppConfig, streamingCtx: StreamingConte
         user.save()
       }
     }
-
-    log.info("Snowplow Stream Processor Ready")
-    context.parent ! ProcessorReady(self)
   }
 
-  def receive = {
-    case _ => ()
-  }
 
-  private def getSnowplowStream(streamingCtx: StreamingContext, appConfig: AppConfig): DStream[Array[Byte]] = {
+  private def getSnowplowStream(appConfig: AppConfig, streamingCtx: StreamingContext): DStream[Array[Byte]] = {
     KinesisUtils.createStream(
       streamingCtx,
       appConfig.appName,
@@ -111,11 +92,5 @@ class SnowplowStreamProcessor(appConfig: AppConfig, streamingCtx: StreamingConte
 
 
       userStream.filter { user => !user.id.isEmpty }
-  }
-}
-
-object SnowplowStreamProcessor {
-  def props(appConfig: AppConfig, streamingCtx: StreamingContext): Props = {
-    Props(new SnowplowStreamProcessor(appConfig, streamingCtx))
   }
 }

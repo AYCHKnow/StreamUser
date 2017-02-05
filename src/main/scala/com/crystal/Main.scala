@@ -1,11 +1,12 @@
 package com.crystal
 
-// akka
-import akka.actor.{ ActorSystem, Actor, Props }
-
 // Spark
 import org.apache.spark.SparkConf
 import org.apache.spark.streaming.{ Duration, StreamingContext }
+
+// Processors
+import processors.CommandStreamProcessor
+import processors.SnowplowStreamProcessor
 
 object Main extends App {
   AppConfig.setArgs(args)
@@ -25,8 +26,11 @@ object Main extends App {
       // Disable noisy logging
       streamingCtx.sparkContext.setLogLevel("ERROR")
 
-      val system = ActorSystem("SegmentationSystem")
-      val overseer = system.actorOf(Overseer.props(appConfig, streamingCtx), "overseer")
+      CommandStreamProcessor.setup(appConfig, streamingCtx)
+      SnowplowStreamProcessor.setup(appConfig, streamingCtx)
+
+      streamingCtx.start()
+      streamingCtx.awaitTerminationOrTimeout(appConfig.checkpointInterval * 3)
     case None => ()
   }
 }
