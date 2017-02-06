@@ -11,7 +11,10 @@ RUN apt-get install -y wget
 
 # Install Java
 RUN echo deb http://http.debian.net/debian jessie-backports main >> /etc/apt/sources.list
-RUN apt-get update && apt-get install -y openjdk-8-jdk
+RUN apt-get update
+RUN apt-get -t jessie-backports install -y openjdk-8-jre
+RUN apt-get -t jessie-backports install -y openjdk-8-jdk-headless
+RUN apt-get install -y openjdk-8-jdk
 RUN update-alternatives --config java
 
 # Install Scala
